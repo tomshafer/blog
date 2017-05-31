@@ -3,7 +3,7 @@
 Usage:
     make_blog.py PUBLIC_DIR
 
-This program behaves in simply: Point it at a directory that contains Markdown
+This program behaves simply: Point it at a directory that contains Markdown
 files in some configuration, and the program will:
 
 1. Generate in-place HTML files, attaching a template.
