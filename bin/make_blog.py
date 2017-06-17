@@ -83,7 +83,7 @@ class Post(object):
         Uses the conf global.
         """
         relpath = os.path.relpath(source_path, conf.local_base)
-        return "{}.html".format(os.path.splitext(relpath)[0])
+        return "{}".format(os.path.splitext(relpath)[0])
 
 
 if __name__ == "__main__":
