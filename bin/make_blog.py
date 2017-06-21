@@ -105,7 +105,8 @@ if __name__ == "__main__":
             "markdown.extensions.tables",
             "markdown.extensions.codehilite",
             "markdown.extensions.meta",
-            "markdown.extensions.smarty"
+            "markdown.extensions.smarty",
+            "mdx_math"
         ],
         extension_configs={
             "markdown.extensions.footnotes": {
