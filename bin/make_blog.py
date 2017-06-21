@@ -20,8 +20,10 @@ import codecs
 import os
 import re
 from collections import namedtuple
-from dateutil.parser import parse as parse_date
+from datetime import datetime
 import markdown
+import pytz
+from dateutil.parser import parse as parse_date
 from docopt import docopt
 from mako.template import Template
 
@@ -67,7 +69,9 @@ class Post(object):
             # Assign meta, requiring title and date
             meta = md_parser.Meta
             self.title = self.unquote(meta["title"][0])
-            self.date = parse_date(self.unquote(meta["date"][0]))
+            self.date = pytz.timezone("US/Eastern").localize(
+                parse_date(self.unquote(meta["date"][0])),
+                is_dst=None)
 
     @staticmethod
     def unquote(string):
@@ -142,3 +146,14 @@ if __name__ == "__main__":
                      mode="w", encoding="utf-8")as fh3:
         posts = list(sorted(posts, key=lambda p: p.date, reverse=True))
         fh3.write(tmpl_index.render_unicode(posts=posts, conf=conf))
+
+    # Generate RSS feed at the blog root
+    with codecs.open(os.path.join(conf.local_base, "rss.xml"), "w", "utf-8") as fh4:
+        tmpl_rss = Template(input_encoding="utf8",
+                            filename=os.path.join(conf.local_tmpl_base, "rss.xml"))
+
+        # Posts are reverse-chronological
+        posts = list(sorted(posts, key=lambda p: p.date, reverse=True))[:100]
+
+        fh4.write(tmpl_rss.render_unicode(
+            posts=posts, config=conf, build_date=datetime.now(tz=pytz.utc)))
