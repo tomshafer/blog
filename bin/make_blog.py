@@ -147,7 +147,9 @@ if __name__ == "__main__":
         ],
         extension_configs={
             "markdown.extensions.footnotes": {
-                "UNIQUE_IDS": True
+                "UNIQUE_IDS": True,
+                # https://github.com/jekyll/jekyll/issues/3751#issue-83081590
+                "BACKLINK_TEXT": "&#8617;&#xfe0e;"
             },
             "markdown.extensions.codehilite": {
                 "use_pygments": True
