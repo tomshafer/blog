@@ -55,3 +55,5 @@ Future upgrades and extensions:
 - *Add logging and timing to the page generation.*
 
 - *Add site generation and upload scripts to the repository.*
+
+- *Add logic to convert relative links to full ones fir the index page and feeds.*

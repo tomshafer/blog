@@ -151,6 +151,9 @@ if __name__ == "__main__":
             },
             "markdown.extensions.codehilite": {
                 "use_pygments": True
+            },
+            "mdx_math": {
+                "enable_dollar_delimiter": True
             }
         })
 
