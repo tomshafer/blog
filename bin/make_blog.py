@@ -184,7 +184,11 @@ if __name__ == "__main__":
     # Generate index file at base of blog root
     with codecs.open(os.path.join(conf.local_base, "index.html"), "w", "utf-8")as fh:
         fh.write(tmpl_index.render_unicode(posts=posts, conf=conf))
-
+    
+    # Mutate posts, rewriting /blog/ URLs with the full domain name
+    for post in posts:
+        post.html = re.sub(r'([\'"])/blog', r'\1https://tshafer.com/blog', post.html)
+    
     # Generate RSS feed at the blog root
     with codecs.open(os.path.join(conf.local_base, "rss.xml"), "w", "utf-8") as fh:
         template = Template(
