@@ -175,6 +175,10 @@ if __name__ == "__main__":
         input_encoding="utf-8",
         filename=os.path.join(conf.local_tmpl_base, "blog_index_template.html"))
 
+    tmpl_archive= Template(
+        input_encoding="utf-8",
+        filename=os.path.join(conf.local_tmpl_base, "blog_archive_template.html"))
+
     # Generate HTML from stored objects
     for post in posts:
         html_path = "{}.html".format(os.path.splitext(post.source_path)[0])
@@ -184,7 +188,27 @@ if __name__ == "__main__":
     # Generate index file at base of blog root
     with codecs.open(os.path.join(conf.local_base, "index.html"), "w", "utf-8")as fh:
         fh.write(tmpl_index.render_unicode(posts=posts, conf=conf))
-    
+
+    # Year and month archives
+    for yr in set(p.date.year for p in posts):
+        year_posts = list(filter(lambda p: p.date.year == yr, posts))
+        with codecs.open(os.path.join(conf.local_base, f'{yr}/index.html'), "w", "utf-8")as fh:
+            fh.write(tmpl_archive.render_unicode(posts=year_posts, conf=conf, archive_title=f'{yr}'))
+        for mn in set(p.date.month for p in year_posts):
+            month_posts = list(filter(lambda p: p.date.month == mn, year_posts))
+            with codecs.open(
+                    os.path.join(conf.local_base, '{year}/{month:02d}/index.html'.format(year=yr, month=mn)),
+                    "w", "utf-8")as fh:
+                fh.write(tmpl_archive.render_unicode(
+                    posts=month_posts,
+                    conf=conf,
+                    archive_title='{}'.format(month_posts[0].date.strftime('%B %Y'))))
+
+    # Month archives
+    for yr_mon in set(p.date.strftime('%B %Y') for p in posts):
+        year_mon_posts = filter(lambda p: p.date.strftime('%B %Y') == yr_mon, posts)
+
+
     # Mutate posts, rewriting /blog/ URLs with the full domain name
     for post in posts:
         post.html = re.sub(r'([\'"])/blog', r'\1https://tshafer.com/blog', post.html)
