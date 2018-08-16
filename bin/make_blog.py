@@ -123,39 +123,39 @@ class Post(object):
         return "{}".format(os.path.splitext(relpath)[0])
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     cli_args = docopt(__doc__)
-    conf.local_base = cli_args["PUBLIC_DIR"]
+    conf.local_base = cli_args['PUBLIC_DIR']
 
     # Find Markdown files
-    md_extensions = ("md", "mdown", "text")
+    md_extensions = ('md', 'mdown', 'text')
     md_files = tuple(find_files(conf.local_base, md_extensions))
     if not md_files:
-        quit("No markdown files found.")
+        quit('No markdown files found.')
 
     # Initialize the parser
     parser = markdown.Markdown(
-        output_format="html5",
+        output_format='html5',
         extensions=[
-            "markdown.extensions.fenced_code",
-            "markdown.extensions.footnotes",
-            "markdown.extensions.tables",
-            "markdown.extensions.codehilite",
-            "markdown.extensions.meta",
-            "markdown.extensions.smarty",
-            "mdx_math"
+            'markdown.extensions.fenced_code',
+            'markdown.extensions.footnotes',
+            'markdown.extensions.tables',
+            'markdown.extensions.codehilite',
+            'markdown.extensions.meta',
+            'markdown.extensions.smarty',
+            'mdx_math'
         ],
         extension_configs={
-            "markdown.extensions.footnotes": {
-                "UNIQUE_IDS": True,
+            'markdown.extensions.footnotes': {
+                'UNIQUE_IDS': True,
                 # https://github.com/jekyll/jekyll/issues/3751#issue-83081590
-                "BACKLINK_TEXT": "&#8617;&#xfe0e;"
+                'BACKLINK_TEXT': '&#8617;&#xfe0e;'
             },
-            "markdown.extensions.codehilite": {
-                "use_pygments": True
+            'markdown.extensions.codehilite': {
+                'use_pygments': True
             },
-            "mdx_math": {
-                "enable_dollar_delimiter": True
+            'mdx_math': {
+                'enable_dollar_delimiter': True
             }
         })
 
@@ -168,31 +168,31 @@ if __name__ == "__main__":
 
     # Load templates
     tmpl_post = Template(
-        input_encoding="utf-8",
-        filename=os.path.join(conf.local_tmpl_base, "blog_post_template.html"))
+        input_encoding='utf-8',
+        filename=os.path.join(conf.local_tmpl_base, 'blog_post_template.html'))
 
     tmpl_index = Template(
-        input_encoding="utf-8",
-        filename=os.path.join(conf.local_tmpl_base, "blog_index_template.html"))
+        input_encoding='utf-8',
+        filename=os.path.join(conf.local_tmpl_base, 'blog_index_template.html'))
 
     tmpl_archive= Template(
-        input_encoding="utf-8",
-        filename=os.path.join(conf.local_tmpl_base, "blog_archive_template.html"))
+        input_encoding='utf-8',
+        filename=os.path.join(conf.local_tmpl_base, 'blog_archive_template.html'))
 
     # Generate HTML from stored objects
     for post in posts:
-        html_path = "{}.html".format(os.path.splitext(post.source_path)[0])
-        with codecs.open(html_path, "w", "utf-8") as fh:
+        html_path = '{}.html'.format(os.path.splitext(post.source_path)[0])
+        with codecs.open(html_path, 'w', 'utf-8') as fh:
             fh.write(tmpl_post.render(post=post, conf=conf))
 
     # Generate index file at base of blog root
-    with codecs.open(os.path.join(conf.local_base, "index.html"), "w", "utf-8")as fh:
+    with codecs.open(os.path.join(conf.local_base, 'index.html'), 'w', 'utf-8')as fh:
         fh.write(tmpl_index.render_unicode(posts=posts, conf=conf))
 
     # Year and month archives
     for yr in set(p.date.year for p in posts):
         year_posts = list(filter(lambda p: p.date.year == yr, posts))
-        with codecs.open(os.path.join(conf.local_base, f'{yr}/index.html'), "w", "utf-8")as fh:
+        with codecs.open(os.path.join(conf.local_base, f'{yr}/index.html'), 'w', 'utf-8')as fh:
             fh.write(tmpl_archive.render_unicode(posts=year_posts, conf=conf, archive_title=f'{yr}'))
         for mn in set(p.date.month for p in year_posts):
             month_posts = list(filter(lambda p: p.date.month == mn, year_posts))
@@ -214,15 +214,15 @@ if __name__ == "__main__":
         post.html = re.sub(r'([\'"])/blog', r'\1https://tshafer.com/blog', post.html)
     
     # Generate RSS feed at the blog root
-    with codecs.open(os.path.join(conf.local_base, "rss.xml"), "w", "utf-8") as fh:
+    with codecs.open(os.path.join(conf.local_base, 'rss.xml'), 'w', 'utf-8') as fh:
         template = Template(
-            input_encoding="utf8",
-            filename=os.path.join(conf.local_tmpl_base, "rss.xml"))
+            input_encoding='utf8',
+            filename=os.path.join(conf.local_tmpl_base, 'rss.xml'))
         fh.write(render_rss_feed(template=template, posts=posts))
 
     # Generate JSON feed
-    with codecs.open(os.path.join(conf.local_base, "feed.json"), "w", "utf-8") as fh:
+    with codecs.open(os.path.join(conf.local_base, 'feed.json'), 'w', 'utf-8') as fh:
         template = Template(
-            input_encoding="utf8",
-            filename=os.path.join(conf.local_tmpl_base, "feed.json"))
+            input_encoding='utf8',
+            filename=os.path.join(conf.local_tmpl_base, 'feed.json'))
         fh.write(render_json_feed(template=template, posts=posts))
